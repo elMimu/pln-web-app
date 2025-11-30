@@ -4,7 +4,6 @@ import SearchBar from "./components/SearchBar";
 export default function Home() {
   return (
     <div className="flex-col items-center justify-center border w-full h-full">
-      <SearchBar />
       <section className="flex justify-center w-full border">
         <div className="relative w-full">
           <Image
