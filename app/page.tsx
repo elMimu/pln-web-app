@@ -1,14 +1,10 @@
 import Image from "next/image";
+import SearchBar from "./components/SearchBar";
 
 export default function Home() {
   return (
     <div className="flex-col items-center justify-center border w-full h-full">
-      <section className="flex p-10 m-10 justify-center w-full border">
-        <div className="flex w-[80%] border gap-2">
-          <input type="text" className="flex-1 border" />
-          <button className="border">Search</button>
-        </div>
-      </section>
+      <SearchBar />
       <section className="flex justify-center w-full border">
         <div className="relative w-full">
           <Image
