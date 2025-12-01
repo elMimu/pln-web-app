@@ -1,4 +1,3 @@
-// components/Movie.tsx
 "use client";
 
 import Image from "next/image";
@@ -17,6 +16,7 @@ type MovieProps = {
 
 export function Movie({ movie, reviews }: MovieProps) {
   const [analysis, setAnalysis] = useState<any>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     async function run() {
@@ -31,7 +31,6 @@ export function Movie({ movie, reviews }: MovieProps) {
       try {
         const data = await res.json();
         setAnalysis(data);
-        console.log("Gemini Analysis:", data);
       } catch (err) {
         console.error("Error parsing JSON:", err);
       }
@@ -39,8 +38,6 @@ export function Movie({ movie, reviews }: MovieProps) {
 
     run();
   }, [reviews]);
-
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   function handleNext() {
     setCurrentIndex((prev) => (prev + 1) % reviews.length);
@@ -57,9 +54,9 @@ export function Movie({ movie, reviews }: MovieProps) {
   return (
     <>
       {/* MOVIE HEADER */}
-      <section className="flex w-full gap-6 border p-6 rounded-lg">
+      <section className="flex w-full gap-8 p-8 rounded-2xl bg-white shadow-md border border-gray-200">
         {/* Poster */}
-        <div className="relative min-w-[280px] h-[420px]">
+        <div className="relative min-w-[260px] h-[390px] rounded-xl overflow-hidden shadow">
           <Image
             src={
               movie.poster_path
@@ -68,19 +65,21 @@ export function Movie({ movie, reviews }: MovieProps) {
             }
             fill
             alt={`${movie.title} poster`}
-            className="object-cover rounded-lg"
+            className="object-cover"
           />
         </div>
 
         {/* Movie Info */}
         <div className="flex flex-col justify-start max-w-2xl">
-          <h2 className="text-3xl font-semibold mb-4">{movie.title}</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            {movie.title}
+          </h2>
 
-          <p className="text-sm opacity-80 whitespace-pre-line">
+          <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
             {movie.overview}
           </p>
 
-          <p className="mt-4 text-lg font-medium">
+          <p className="mt-6 text-lg font-semibold text-gray-900">
             Rating:{" "}
             <span className="text-yellow-500">{movie.vote_average}/10</span>
           </p>
@@ -88,56 +87,67 @@ export function Movie({ movie, reviews }: MovieProps) {
       </section>
 
       {/* GENERAL OPINION (Gemini) */}
-      <section className="border mt-10 p-6 rounded-lg">
-        <h2 className="text-xl font-semibold mb-3">General Opinion</h2>
+      <section className="mt-10 p-8 rounded-2xl bg-white shadow-md border border-gray-200">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+          General Opinion
+        </h2>
 
         {!analysis && (
-          <p className="opacity-70 text-sm">Analyzing reviews with Gemini…</p>
+          <p className="text-gray-500 text-sm">
+            Analyzing reviews with Gemini…
+          </p>
         )}
 
         {analysis && (
-          <div className="space-y-2 text-sm opacity-85">
+          <div className="space-y-3 text-gray-700 text-sm leading-relaxed">
             <p>
-              <strong>Overall Sentiment:</strong>{" "}
+              <strong className="text-gray-900">Overall Sentiment:</strong>{" "}
               {analysis.overall_sentiment}
             </p>
             <p>
-              <strong>Explanation:</strong> {analysis.explanation}
+              <strong className="text-gray-900">Explanation:</strong>{" "}
+              {analysis.explanation}
             </p>
             <p>
-              <strong>Keywords:</strong> {analysis.keywords.join(", ")}
+              <strong className="text-gray-900">Keywords:</strong>{" "}
+              {analysis.keywords.join(", ")}
             </p>
             <p>
-              <strong>Summary:</strong> {analysis.summary}
+              <strong className="text-gray-900">Summary:</strong>{" "}
+              {analysis.summary}
             </p>
           </div>
         )}
       </section>
 
       {/* REVIEWS CAROUSEL */}
-      <section className="border mt-10 p-6 rounded-lg">
-        <h2 className="text-xl font-semibold mb-4">Reviews</h2>
+      <section className="mt-10 p-8 rounded-2xl bg-white shadow-md border border-gray-200">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          Reviews
+        </h2>
 
         {reviews.length === 0 ? (
-          <p className="opacity-60">No reviews available.</p>
+          <p className="text-gray-500">No reviews available.</p>
         ) : (
           <>
-            <div className="flex items-center justify-center gap-4 border p-4 rounded-lg">
-
+            <div className="flex items-center justify-center gap-6 p-4 rounded-xl bg-gray-50 border border-gray-200">
               {/* Previous */}
               <button
                 onClick={handlePrevious}
-                className="border px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="
+                  px-4 py-2 rounded-lg text-gray-700 bg-white border border-gray-300
+                  hover:bg-gray-100 transition
+                "
               >
                 Previous
               </button>
 
               {/* Review Content */}
-              <div className="max-w-[60%] border p-4 rounded-lg transition-all duration-200">
-                <p className="text-sm opacity-85 leading-relaxed whitespace-pre-line">
+              <div className="max-w-[60%] p-5 rounded-xl bg-white border border-gray-200 shadow-sm transition-all duration-200">
+                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
                   {currentReview.content}
                 </p>
-                <p className="mt-4 text-xs opacity-60 text-right">
+                <p className="mt-4 text-xs text-gray-500 text-right">
                   — {currentReview.author}
                 </p>
               </div>
@@ -145,22 +155,25 @@ export function Movie({ movie, reviews }: MovieProps) {
               {/* Next */}
               <button
                 onClick={handleNext}
-                className="border px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="
+                  px-4 py-2 rounded-lg text-gray-700 bg-white border border-gray-300
+                  hover:bg-gray-100 transition
+                "
               >
                 Next
               </button>
             </div>
 
             {/* Dots Indicator */}
-            <div className="flex justify-center gap-2 mt-3">
+            <div className="flex justify-center gap-2 mt-4">
               {reviews.map((_, i) => (
                 <div
                   key={i}
                   onClick={() => setCurrentIndex(i)}
                   className={`w-3 h-3 rounded-full cursor-pointer transition-all ${
                     i === currentIndex
-                      ? "bg-blue-500 scale-110"
-                      : "bg-gray-400/40 hover:bg-gray-400/70"
+                      ? "bg-blue-600 scale-110"
+                      : "bg-gray-300 hover:bg-gray-400"
                   }`}
                 />
               ))}
