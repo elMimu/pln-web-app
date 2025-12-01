@@ -1,3 +1,4 @@
+import { MinimalReview, TMDBReview } from "@/app/types/tmdb";
 import "server-only";
 
 const baseUrl = process.env.TMDB_BASE_URL;
@@ -43,14 +44,21 @@ export async function getMovieReviews(
   movieId: string | number,
   page = 1,
   language = "en-US",
-) {
+): Promise<MinimalReview[]> {
   const data = await tmdb(`/movie/${movieId}/reviews`, {
     page: String(page),
     language,
   });
 
-  return data.results;
+  const results: TMDBReview[] = Array.isArray(data.results) ? data.results : [];
+
+  return results.map((r) => ({
+    author: r.author,
+    updated_at: r.updated_at,
+    content: r.content,
+  }));
 }
+
 
 export async function searchMovie(query: string, page = 1, language = "en-US") {
   const data = await tmdb("/search/movie", {
